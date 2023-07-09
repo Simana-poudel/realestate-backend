@@ -1,5 +1,7 @@
 const User = require("../model/user.model");
-const jwt = require("express-jwt");
+// const jwt = require("express-jwt");
+const jwt = require("jsonwebtoken");
+
 
 exports.getUsers = async (req, res) => {
   try {
@@ -14,8 +16,9 @@ exports.getUsers = async (req, res) => {
 
 exports.getUser = async (req, res) => {
   try {
-    const { _id } = req.body;
-    const user = await User.findOne({ _id: _id });
+    console.log(`user: ${req.params.userId}`)
+    const id = req.params?.userId;
+    const user = await User.findOne({ _id: id });
     res.json({ data: user }).status(200);
   } catch (e) {
     console.log(e);
@@ -54,25 +57,23 @@ exports.loginUser = async (req, res) => {
     const secretKey = "123456-1234567";
     const { password, email } = req.body;
     const user = await User.findOne({
-      email,
-    });
+      email }, "+salt + hashed_password");
 
-    if (!user) {
-      return res.json({ error: `User Not Found` }).status(404);
-    }
+    // if (!user) {
+    //   return res.json({ error: `User Not Found` }).status(404);
+    // }
 
-    if (!user.authentication(password)) {
+    if (!user?.authentication(password)) {
       return res.json({ error: `Password Not Correct` }).status(401);
     }
 
-    const token = jwt.sign(
+    const token = jwt.sign( 
       {
-        _id: user._id,
-        email,
-        password,
-      },
-      secretKey
-    );
+      _id: user._id,
+      email,
+      password,
+    },
+    secretKey);
 
     res.json({ token }).status(200);
   } catch (e) {

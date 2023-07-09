@@ -16,8 +16,8 @@ exports.getProperties = async (req, res) => {
 
   exports.getProperty = async (req, res) => {
     try {
-      const { _id } = req.body;
-      const property = await Property.findOne({ _id: _id });
+      const id = req.params?.propertyId;
+      const property = await Property.findOne({ _id: id });
       res.json({ data: property }).status(200);
     } catch (e) {
       console.log(e);

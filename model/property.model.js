@@ -39,6 +39,10 @@ const propertySchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  rooms: { //added
+    type: Number,
+    required: true
+  },
   parkingSpace: {
     type: Number,
     required: function(){
@@ -84,5 +88,6 @@ const propertySchema = new mongoose.Schema({
 });
 
 const Property = mongoose.model('Property', propertySchema);
+
 
 module.exports = Property;
