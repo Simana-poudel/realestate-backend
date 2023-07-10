@@ -37,6 +37,7 @@ exports.getProperties = async (req, res) => {
         city,
         size,
         area,
+        rooms,
         parkingSpace,
         kitchen,
         bedroom,
@@ -61,6 +62,7 @@ exports.getProperties = async (req, res) => {
         city,
         size,
         area,
+        rooms: rooms || 0,
         parkingSpace:parkingSpace || 0,
         kitchen : kitchen || 0,
         bedroom:bedroom || 0,
@@ -125,6 +127,7 @@ exports.getProperties = async (req, res) => {
       res.status(500).json({ error: `Error Occurred: ${error}` });
     }
   };
+
 
 
 

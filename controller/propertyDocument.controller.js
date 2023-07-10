@@ -15,20 +15,20 @@ exports.getPropertyDoc = async (req, res) => {
 exports.postPropertyDoc = async (req, res) => {
   try {
     const {
-      property,
+      propertyId,
       documentType,
       documentImage
     } = req.body;
 
     // Create a new property document
     const newPropertyDoc = new PropertyDocument({
-      property,
+      property: propertyId,
       documentType,
       documentImage
     });
 
     // Save the new property document
-    const savedPropertyDoc = await PropertyDocument.save();
+    const savedPropertyDoc = await newPropertyDoc.save();
 
     res.status(201).json({ data: savedPropertyDoc });
   } catch (error) {
