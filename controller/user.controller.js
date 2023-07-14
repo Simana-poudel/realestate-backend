@@ -37,7 +37,7 @@ exports.getUserController = async (req, res) => {
   }
 };
 
-exports.registerUserController = async (req, res) => {
+exports.registerUserController = async (req, res, next) => {
   try {
     const { name, contact, password, email, address } = req.body;
 
@@ -133,7 +133,7 @@ exports.logOutUser = async (req, res) => {
     return res
       .clearCookie("access_token")
       .status(200)
-      .json({ data: { message: "Logged out successfully !!" } });
+      .json({ data: { message: "Logged in successfully !!" } });
   } catch (e) {
     res.fail(e);
   }

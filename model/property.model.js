@@ -1,5 +1,17 @@
 const mongoose = require('mongoose');
 
+
+const ImageSchema = mongoose.Schema({
+  name: {
+      type: String,
+      require:true
+  },
+  image: {
+      data: Buffer,
+      contentType: String
+  }
+});
+
 const propertySchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
@@ -81,10 +93,9 @@ const propertySchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-  propertyImage: {
-    type: String, // Assuming you store the image URL as a string
-    required: false
-  }
+  propertyImage: [ImageSchema]
+}, {
+  timestamps: true
 });
 
 const Property = mongoose.model('Property', propertySchema);

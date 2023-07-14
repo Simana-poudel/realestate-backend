@@ -8,7 +8,6 @@ const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
 const {connect} = require("./config/db")
 
-
 // dotenv configure
 dotenv.config({
     path: "./config/.env",
@@ -33,7 +32,6 @@ app.use(json())
 app.use(urlencoded({ extended: true }));
 app.use(cookieParser());
 
-
 const port = parseInt(process.argv[2]) || process.env.PORT || 3000;
 app.set("port", port);
 
@@ -43,8 +41,10 @@ app.use('*',(req,res,next) => {
     next()
 })
 
+
 //routes
 app.use('/api',mainRouter)
+
 
 
 //handle other requests with 404 if not handled previously
