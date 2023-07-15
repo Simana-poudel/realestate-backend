@@ -9,12 +9,17 @@ const ImageSchema = mongoose.Schema({
       data: Buffer,
       contentType: String
   }
-},{_id:false});
+});
 
-const propertySchema = new mongoose.Schema({
+const offerpropertySchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref:'User',
+    required: true
+  },
+  property: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref:'Property',
     required: true
   },
   propertyType: {
@@ -29,6 +34,10 @@ const propertySchema = new mongoose.Schema({
   description: {
     type: String,
     required: true
+  },
+  message: {
+    type: String,
+    required: false
   },
   price: {
     type: Number,
@@ -52,7 +61,9 @@ const propertySchema = new mongoose.Schema({
   },
   rooms: { //added
     type: Number,
-    required: true
+    required: function(){
+      return this.propertyType==='house'
+    }
   },
   parkingSpace: {
     type: Number,
@@ -62,27 +73,39 @@ const propertySchema = new mongoose.Schema({
   },
   kitchen: {
     type: Number,
-    required: true
+    required: function(){
+      return this.propertyType==='house'
+    }
   },
   bedroom: {
     type: Number,
-    required: true
+    required: function(){
+      return this.propertyType==='house'
+    }
   },
   diningRoom: {
     type: Number,
-    required: true
+    required: function(){
+      return this.propertyType==='house'
+    }
   },
   hall: {
     type: Number,
-    required: true
+    required: function(){
+      return this.propertyType==='house'
+    }
   },
   bathroom: {
     type: Number,
-    required: true
+    required: function(){
+      return this.propertyType==='house'
+    }
   },
   noOfFloors: {
     type: Number,
-    required: true
+    required: function(){
+      return this.propertyType==='house'
+    }
   },
   builtYear: {
     type: Number,
@@ -90,14 +113,16 @@ const propertySchema = new mongoose.Schema({
   },
   usedArea: {
     type: Number,
-    required: true
+    required: function(){
+      return this.propertyType==='house'
+    }
   },
-  propertyImage: [ImageSchema],
+  propertyImage: [ImageSchema]
 }, {
   timestamps: true
 });
 
-const Property = mongoose.model('Property', propertySchema);
+const OfferProperty = mongoose.model('OfferProperty', offerpropertySchema);
 
 
-module.exports = Property;
+module.exports = OfferProperty;

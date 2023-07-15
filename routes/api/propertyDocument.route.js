@@ -3,13 +3,14 @@ const {
   getPropertyDoc,
   postPropertyDoc,
   updatePropertyDoc,
-
+  getPropertyDocs
 } = require("../../controller/propertyDocument.controller");
 
 const router = express.Router();
 
-router.get("/", getPropertyDoc);
+router.get('/', getPropertyDocs)
+router.get("/:propertydocumentId", getPropertyDoc);
 router.post("/", postPropertyDoc);
-router.put("/", updatePropertyDoc);
+router.put("/:propertydocumentId", updatePropertyDoc);
 
 module.exports = router;

@@ -6,6 +6,8 @@ const User = require("../model/user.model");
 exports.checkAuthValidation = async (req, res, next) => {
   try {
     if (!req.cookies?.access_token) {
+      console.log({cookies: req.cookies});
+      console.log({cookies: req.headers});
       throw new SetErrorResponse("Auth Token Not Found", 401);
     }
     const token = req.cookies?.access_token;

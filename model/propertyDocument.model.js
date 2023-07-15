@@ -1,7 +1,15 @@
-
-
-
 const mongoose = require('mongoose');
+
+const ImageSchema = mongoose.Schema({
+  name: {
+      type: String,
+      require:true
+  },
+  image: {
+      data: Buffer,
+      contentType: String
+  }
+},{_id:false});
 
 const propertyDocumentSchema = new mongoose.Schema({
   property: {
@@ -11,12 +19,10 @@ const propertyDocumentSchema = new mongoose.Schema({
   },
   documentType: {
     type: String,
+    enum:['lalpurja', 'naksa'],
     required: true
   },
-  documentImage: {
-    type: String, // Assuming you store the image URL as a string
-    required: true
-  }
+  documentImage: [ImageSchema]
 });
 
 const PropertyDocument = mongoose.model('PropertyDocument', propertyDocumentSchema);

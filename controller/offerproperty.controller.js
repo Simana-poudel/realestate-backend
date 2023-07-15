@@ -1,25 +1,17 @@
+const multer = require('multer');
 const{ uploadImage } = require('../middlewares/multerUpload');
-const Property = require("../model/property.model");
+const OfferProperty = require("../model/offeredproperty.model");
 const PropertyDocument = require('../model/propertyDocument.model');
+const path = 'C:/Users/siman/OneDrive/Desktop/sellby/Sellby/uploads/'; // Set the path where the images are saved
 
 
 const jwt = require("express-jwt");
 
-exports.getProperties = async (req, res) => {
-    try {
-      console.log("properties");
-      const properties = await Property.find({});
-      res.json({ data: properties }).status(200);
-    } catch (e) {
-      console.log(e);
-      res.json({ error: `Error Occured, ${e}` }).status(500);
-    }
-  };
 
-  exports.getProperty = async (req, res) => {
+  exports.getOfferProperty = async (req, res) => {
     try {
-      const id = req.params?.propertyId;
-      const property = await Property.findOne({ _id: id }).populate('user');// added
+      const id = req.params?.offerpropertyId;
+      const property = await OfferProperty.findOne({ _id: id }).populate('user');// added
       res.json({ data: property }).status(200);
     } catch (e) {
       console.log(e);
@@ -27,7 +19,7 @@ exports.getProperties = async (req, res) => {
     }
   };
 
-exports.postProperty = async (req, res) => {
+exports.postOfferProperty = async (req, res) => {
   try {
     // Invoke the uploadImage middleware to handle the image uploads
     uploadImage(req, res, async function (err) {
@@ -53,9 +45,11 @@ exports.postProperty = async (req, res) => {
 
       const {
         userId,
+        propertyId,
         propertyType,
         title,
         description,
+        message,
         price,
         district,
         city,
@@ -74,11 +68,13 @@ exports.postProperty = async (req, res) => {
       } = req.body;
 
       // Create a new property information with the uploaded images
-      const newProperty = new Property({
+      const newProperty = new OfferProperty({
         user: userId,
+        property: propertyId,
         propertyType,
         title,
         description,
+        message,
         price,
         district,
         city,
@@ -107,53 +103,3 @@ exports.postProperty = async (req, res) => {
     res.status(500).json({ error: `Error Occurred: ${error}` });
   }
 };
-
-  exports.updateProperty = async (req, res) => {
-    try {
-      const { propertyId } = req.params;
-      const updatedPropertyData = req.body;
-  
-      // Find the existing property document by propertyId and update its data
-      const updatedProperty = await Property.findByIdAndUpdate(
-        propertyId,
-        updatedPropertyData,
-        { new: true }
-      );
-  
-      if (!updatedProperty) {
-        return res.status(404).json({ error: "Property not found" });
-      }
-  
-      res.status(200).json({ data: updatedProperty });
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({ error: `Error Occurred: ${error}` });
-    }
-  };
-
-  exports.deleteProperty = async (req, res) => {
-    try {
-      const { propertyId } = req.params;
-      const {propertyDocumentId} = req.params;
-  
-      // Find the property document by propertyId and delete it
-      const deletedProperty = await Property.findByIdAndDelete(propertyId);
-      const deletedPropertyDocument = await PropertyDocument.findByIdAndDelete(propertyDocumentId);
-
-      if (!deletedProperty) {
-        return res.status(404).json({ error: "Property not found" });
-      }
-  
-      res.status(200).json({ message: "Property deleted successfully" });
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({ error: `Error Occurred: ${error}` });
-    }
-  };
-
-
-
-
-  
-  
-
