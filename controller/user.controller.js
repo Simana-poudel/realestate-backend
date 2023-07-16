@@ -55,7 +55,7 @@ exports.registerUserController = async (req, res, next) => {
     const sendEmail = await sendEmailToEmailAddress({
       email,
       otp,
-      subject: "Greetings, Bulk Email Processor. ",
+      subject: "Greetings, Sellby. ",
     });
     if (!sendEmail) throw new SetErrorResponse("Couldn't send email", 500);
 
@@ -122,7 +122,7 @@ exports.loginUser = async (req, res) => {
         secure: config.getInstance().nodeEnv === "production",
       })
       .status(200)
-      .json({ data: { message: "Logged in successfully !!", token,userId:data?._id } });
+      .json({ data: { message: "Logged in successfully !!", token,userId:data?._id , username: data?.name } });
   } catch (e) {
     res.fail(e);
   }

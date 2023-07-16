@@ -1,8 +1,8 @@
 const multer = require('multer');
 const{ uploadImage } = require('../middlewares/multerUpload');
 const OfferProperty = require("../model/offeredproperty.model");
-const PropertyDocument = require('../model/propertyDocument.model');
-const path = 'C:/Users/siman/OneDrive/Desktop/sellby/Sellby/uploads/'; // Set the path where the images are saved
+const { sendOfferEmailToSeller } = require("../utils/mail");
+const { SetErrorResponse } = require("../utils/responseSetter");
 
 
 const jwt = require("express-jwt");
@@ -101,5 +101,33 @@ exports.postOfferProperty = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: `Error Occurred: ${error}` });
+  }
+};
+
+
+
+exports.fixMeetingController = async (req, res, next) => {
+  try {
+    const {  email, url } = req.body;
+
+    const savingValues = {
+
+      email,
+      url
+    };
+
+    const sendEmail = await sendOfferEmailToSeller({
+      email,
+      url,
+      subject: "Greetings, Sellby. ",
+    });
+    if (!sendEmail) throw new SetErrorResponse("Couldn't send email", 500);
+
+    return res.success(
+      { email },
+      `Your offer is sucessfully send to seller.`
+    );
+  } catch (err) {
+    return res.fail(err);
   }
 };
