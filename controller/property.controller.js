@@ -5,16 +5,69 @@ const PropertyDocument = require('../model/propertyDocument.model');
 
 const jwt = require("express-jwt");
 
+// exports.getPropertyDocumentsController = async (req, res) => {
+//   try {
+//     const { limit, page, district, city, propertyType } = req.query;
+
+//     // Create the query object based on the provided search parameters
+//     const query = {};
+
+//     if (district) {
+//       query.district = district;
+//     }
+
+//     if (city) {
+//       query.city = city;
+//     }
+
+//     if (propertyType) {
+//       query.propertyType = propertyType;
+//     }
+
+//     const data = await getPaginatedData(Property, {
+//       pagination: true,
+//       query,
+//       lean: true,
+//       limit,
+//       page,
+//       modFunction: (data) => {
+//         return data;
+//       },
+//     });
+
+//     res.success(data);
+//   } catch (e) {
+//     res.fail(e);
+//   }
+// };
+
 exports.getProperties = async (req, res) => {
-    try {
-      console.log("properties");
-      const properties = await Property.find({});
-      res.json({ data: properties }).status(200);
-    } catch (e) {
-      console.log(e);
-      res.json({ error: `Error Occured, ${e}` }).status(500);
+  try {
+    const { district, city, propertyType } = req.query;
+
+    // Create the query object based on the provided search parameters
+    const query = {};
+
+    if (district) {
+      query.district = district;
     }
-  };
+
+    if (city) {
+      query.city = city;
+    }
+
+    if (propertyType) {
+      query.propertyType = propertyType;
+    }
+
+    const properties = await Property.find(query);
+    res.json({ data: properties }).status(200);
+  } catch (e) {
+    console.log(e);
+    res.json({ error: `Error Occurred, ${e}` }).status(500);
+  }
+};
+
 
   exports.getProperty = async (req, res) => {
     try {
