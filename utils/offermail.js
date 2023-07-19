@@ -1,16 +1,16 @@
 var SibApiV3Sdk = require("sib-api-v3-sdk");
 const config = require("../config/env");
 
-exports.sendEmailToEmailAddress = async (emailData) => {
+exports.sendOfferEmailToSeller = async (emailData) => {
   try {
-    const { email, otp, subject } = emailData;
+    const { email, url, subject } = emailData;
 
     var apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
     var sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail(); // SendSmtpEmail | Values to send a transactional email
     sendSmtpEmail = {
       sender: { email: config.getInstance().senderMail },
       to: [{ email: email }],
-      subject: `Sellby`,
+      subject: `Interested Client`,
       textContent: `
       <!DOCTYPE html>
       <html lang="en">
@@ -22,9 +22,9 @@ exports.sendEmailToEmailAddress = async (emailData) => {
       </head>
       <body>
           <div style="background:gray; padding:2rem;">
-              <h3>Email Sent from sellby for buying and selling property </h3>
-              <h3> This Email is Send to ${email}  </h3>
-              <h1> The OTP code is  ${otp} </h1>
+          <h3> This Email is Send to ${email} from Sellby. </h3>
+              <h3> A client is interested in your property. He want to fix a meeting. </h3>
+              <h1> Click Here to View details ${url} </h1>
           </div>
       </body>
       </html>
@@ -42,4 +42,3 @@ exports.sendEmailToEmailAddress = async (emailData) => {
     throw error;
   }
 };
-

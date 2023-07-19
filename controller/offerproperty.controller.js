@@ -1,14 +1,20 @@
-const multer = require('multer');
+const nodemailer = require("nodemailer");
 const{ uploadImage } = require('../middlewares/multerUpload');
 const OfferProperty = require("../model/offeredproperty.model");
-const { sendOfferEmailToSeller } = require("../utils/mail");
 const { SetErrorResponse } = require("../utils/responseSetter");
+const { sendOfferEmailToSeller } = require("../utils/offermail");
 
+exports.getOfferProperties = async (req, res) => {
+  try {
+    const properties = await OfferProperty.find({});
+    res.json({ data: properties }).status(200);
+  } catch (e) {
+    console.log(e);
+    res.json({ error: `Error Occurred, ${e}` }).status(500);
+  }
+};
 
-const jwt = require("express-jwt");
-
-
-  exports.getOfferProperty = async (req, res) => {
+exports.getOfferProperty = async (req, res) => {
     try {
       const id = req.params?.offerpropertyId;
       const property = await OfferProperty.findOne({ _id: id }).populate('user');// added
@@ -105,16 +111,10 @@ exports.postOfferProperty = async (req, res) => {
 };
 
 
-
-exports.fixMeetingController = async (req, res, next) => {
+exports.fixMeetingController = async (req, res) => {
   try {
-    const {  email, url } = req.body;
+    const { email, url, subject } = req.body;
 
-    const savingValues = {
-
-      email,
-      url
-    };
 
     const sendEmail = await sendOfferEmailToSeller({
       email,
@@ -125,7 +125,7 @@ exports.fixMeetingController = async (req, res, next) => {
 
     return res.success(
       { email },
-      `Your offer is sucessfully send to seller.`
+      `Your messege was send to seller.`
     );
   } catch (err) {
     return res.fail(err);
