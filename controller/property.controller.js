@@ -123,8 +123,13 @@ exports.postProperty = async (req, res) => {
         bathroom,
         noOfFloors,
         builtYear,
-        usedArea
+        usedArea,
+        latitude,
+        longitude
       } = req.body;
+
+      const coordinatesJson = [latitude, longitude];
+
 
       // Create a new property information with the uploaded images
       const newProperty = new Property({
@@ -147,6 +152,7 @@ exports.postProperty = async (req, res) => {
         noOfFloors: noOfFloors || 0,
         builtYear: builtYear || 0,
         usedArea: usedArea || 0,
+        coordinates: coordinatesJson,
         propertyImage: images // Assign the uploaded images to the propertyImage field
       });
 

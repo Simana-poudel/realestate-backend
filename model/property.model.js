@@ -92,6 +92,10 @@ const propertySchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  coordinates: {
+    type: [Number, "Coordinates values is not proper"],
+    required: false,
+  },
   propertyImage: [ImageSchema],
 }, {
   timestamps: true
