@@ -1,6 +1,5 @@
 const express  = require('express');
 const http = require("http");
-const socketIO = require('socket.io');
 
 const {json, urlencoded} = express;
 const app = express();
@@ -20,6 +19,7 @@ const mainRouter = require('./routes/main');
 const { corsOptions } = require("./config/corsOptions");
 const { failCase, successCase } = require("./utils/requestHandler");
 const { emailInitialSetup } = require("./utils/initiateMailSetup");
+const { initSocketIO } = require('./sockets/socket.routes');
 
 //database
 connect()
@@ -62,45 +62,10 @@ app.use("*", (req, res, next) => {
 
 // Start the server with Socket.IO
 const server = http.createServer(app);
-const io = socketIO(server,{
-  cors: {
-    origin: "http://localhost:3000",
-  }
-});
 
-io.on('connection', (socket) => {   
-// Handle incoming events from the client
-socket.on('send-message', ({message, roomId}) => {
-  let skt = socket.broadcast;
-  skt = roomId ? skt.to(roomId) : skt;
-skt.emit("message-from-server", {message});
-});
 
-// Handle incoming events from the client
-socket.on('typing', ({roomId}) => {
-  let skt = socket.broadcast;
-  skt = roomId ? skt.to(roomId) : skt;
-  skt.emit("typing-from-server");
-});
-
-// Handle incoming events from the client
-socket.on('typing-stopped', ({roomId}) => {
-  let skt = socket.broadcast;
-  skt = roomId ? skt.to(roomId) : skt;
-skt.emit("typing-stopped-from-server");
-  });
-
-  // Handle incoming events from the client
-socket.on('join-room', ({roomId}) => {
-  socket.join(roomId);
-  });
-
-socket.on('disconnect', () => {
-  console.log('A user disconnected',socket.id);
-});
-
-});
-
+// Call the initSocketIO function and pass the server instance as an argument
+initSocketIO(server);
 
 
 server.listen(port, () => {

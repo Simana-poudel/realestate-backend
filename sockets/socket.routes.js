@@ -1,37 +1,50 @@
+// socket.js
 
-const TypingController = require("./socket.controllers/TypingController");
+const socketIO = require('socket.io');
+const { handleTyping, handleTypingStopped } = require('./socket.controllers/TypingController'); // Import the controller functions
+const { handleJoinRoom, handleNewRoomCreated } = require('./socket.controllers/RoomControllers'); // Import the controller functions
+const { handleSendMessage } = require('./socket.controllers/MessageController');
 
-exports.sockets = (socket) => {
-     
-  // Handle incoming events from the client
-  socket.on('send-message', ({message, roomId}) => {
-    let skt = socket.broadcast
-    skt = roomId ? skt.to(roomId) : skt;
-  skt.emit("message-from-server", {message});
+
+const initSocketIO = (server) => {
+  const io = socketIO(server, {
+    cors: {
+      origin: "http://localhost:3000",
+    },
   });
 
-  // Handle incoming events from the client
-  socket.on('typing', ({roomId}) => {
-    let skt = this.socket.broadcast
-    skt = roomId ? skt.to(roomId) : skt;
-    skt.emit("typing-from-server");
-});
+  io.on('connection', (socket) => {
+    console.log('A user connected', socket.id);
 
-  // Handle incoming events from the client
-  socket.on('typing-stopped', ({roomId}) => {
-    let skt = this.socket.broadcast
-    skt = roomId ? skt.to(roomId) : skt;
-  skt.emit("typing-stopped-from-server");
+
+    // Handle incoming events from the client
+    socket.on('send-message', ({ message, roomId }) => {
+      handleSendMessage({message, roomId}, socket);
+    });
+
+    // Handle typing event using the controller function
+    socket.on('typing', ({ roomId }) => {
+      handleTyping({ roomId }, socket);
+    });
+
+    // Handle typing-stopped event using the controller function
+    socket.on('typing-stopped', ({ roomId }) => {
+      handleTypingStopped({ roomId }, socket);
     });
 
     // Handle incoming events from the client
-  socket.on('join-room', ({roomId}) => {
-    socket.join(roomId);
+    socket.on('join-room', ({ roomId }) => {
+      handleJoinRoom({roomId}, socket);
     });
 
-  socket.on('disconnect', () => {
-    console.log('A user disconnected',socket.id);
+    socket.on('new-room-created', ({ roomId }) => {
+      handleNewRoomCreated({roomId}, socket);
+    });
+
+    socket.on('disconnect', () => {
+      console.log('A user disconnected', socket.id);
+    });
   });
+};
 
-}
-
+module.exports = { initSocketIO };
