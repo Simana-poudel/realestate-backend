@@ -10,10 +10,18 @@ const config = require("../config/env");
 
 exports.getUsersController = async (req, res) => {
   try {
-    const { limit, page } = req.query;
+    const { limit, page, search } = req.query;
+    let query = {}; // Define an empty query object
+
+    if (search) {
+      // If 'search' parameter is provided, create a search query
+      query = {
+        name: { $regex: search, $options: 'i' }, // Case-insensitive regex search
+      };
+    }
     const data = await getPaginatedData(User, {
       pagination: true,
-      query: {},
+      query: query, // Use the constructed query object
       lean: true,
       limit: limit,
       page: page,
@@ -122,7 +130,7 @@ exports.loginUser = async (req, res) => {
         secure: config.getInstance().nodeEnv === "production",
       })
       .status(200)
-      .json({ data: { message: "Logged in successfully !!", token,userId:data?._id , username: data?.name } });
+      .json({ data: { message: "Logged in successfully !!", token,userId:data?._id , username: data?.name, contact: data?.contact, email: email } });
   } catch (e) {
     res.fail(e);
   }

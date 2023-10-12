@@ -9,7 +9,7 @@ const {
 const router = express.Router();
 
 router.get('/', getPropertyDocs)
-router.get("/:propertydocumentId", getPropertyDoc);
+router.get("/:propertyId", getPropertyDoc);
 router.post("/", postPropertyDoc);
 router.put("/:propertydocumentId", updatePropertyDoc);
 

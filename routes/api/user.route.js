@@ -20,9 +20,9 @@ const router = require("express").Router();
 
 router.get(
   "/",
-  checkAuthValidation,
-  getMethodValidate(),
-  validator,
+  // checkAuthValidation,
+  // getMethodValidate(),
+  // validator,
   getUsersController
 );
 

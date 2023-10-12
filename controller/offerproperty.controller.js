@@ -113,12 +113,14 @@ exports.postOfferProperty = async (req, res) => {
 
 exports.fixMeetingController = async (req, res) => {
   try {
-    const { email, url, subject } = req.body;
+    const { email, url, contact, name, subject } = req.body;
 
 
     const sendEmail = await sendOfferEmailToSeller({
       email,
       url,
+      contact,
+      name,
       subject: "Greetings, Sellby. ",
     });
     if (!sendEmail) throw new SetErrorResponse("Couldn't send email", 500);

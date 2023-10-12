@@ -12,3 +12,5 @@ exports.getRooms = async (req, res) => {
     res.json({ error: `Error Occured, ${e}` }).status(500);
   }
 };
+
+

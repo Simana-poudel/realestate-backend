@@ -1,6 +1,7 @@
 const PropertyDocument = require('../model/propertyDocument.model');
 const{ uploadImage } = require('../middlewares/multerUpload');
 const jwt = require("express-jwt");
+const Property = require('../model/property.model');
 
 
 
@@ -17,10 +18,27 @@ exports.getPropertyDocs = async (req, res) => {
 
 exports.getPropertyDoc = async (req, res) => {
     try {
-      console.log('propertyDocument');
-        const id = req.params?.propertydocumentId;
-        const propertyDocument = await PropertyDocument.findOne({ _id: id });
-        console.log({req: req.params.propertydocumentId})
+      console.log('propertyDocument', req.params);
+        const propertyId = req.params?.propertyId;
+        if (!propertyId) {
+          console.log('propertyId not found ');
+          return res.status(400).json({ error: 'Invalid propertyId' });
+        }
+    
+        // Find the property by its _id
+        const property = await Property.findById(propertyId);
+    
+        if (!property) {
+          console.log('property not found')
+          return res.status(404).json({ error: 'Property not found' });
+        }
+
+        const propertyDocument = await PropertyDocument.find({ property: property._id });
+
+        if (!propertyDocument) {
+          console.log('property document not found')
+          return res.status(404).json({ error: 'Property document not found' });
+        }
         res.json({ data: propertyDocument }).status(200);
     } catch (e) {
       console.log(e);
@@ -43,26 +61,28 @@ exports.postPropertyDoc = async (req, res) => {
         const fileName = file.originalname; // Concatenate date and original name to create the filename
         const filePath = 'http://127.0.0.1:8080/' + fileName; // Concatinate path and filename to create the full file path
 
+
         return {
           name: filePath,
           image: {
             data: file.buffer,
             contentType: file.mimetype
           }
+
         };
       });
 
     const {
-      propertyId,
-      documentType
+      propertyId
     } = req.body;
 
     // Create a new property document
     const newPropertyDoc = new PropertyDocument({
       property: propertyId,
-      documentType,
-      documentImage: images
+      naksa: [images[0]], // Use the first uploaded image for 'naksa'
+      lalpurja: [images[1]] // Use the second uploaded image for 'lalpurja'
     });
+
 
     // Save the new property document
     const savedPropertyDoc = await newPropertyDoc.save();

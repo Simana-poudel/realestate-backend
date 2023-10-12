@@ -17,12 +17,9 @@ const propertyDocumentSchema = new mongoose.Schema({
     ref:'Property',
     required: true
   },
-  documentType: {
-    type: String,
-    enum:['lalpurja', 'naksa'],
-    required: true
-  },
-  documentImage: [ImageSchema]
+ naksa: [ImageSchema],
+ lalpurja: [ImageSchema]
+
 });
 
 const PropertyDocument = mongoose.model('PropertyDocument', propertyDocumentSchema);
