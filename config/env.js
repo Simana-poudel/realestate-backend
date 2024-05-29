@@ -24,7 +24,6 @@ class PrivateConfig {
     this.senderMail = process.env.SENDER_MAIL;
     this.mailTrapAuthUser = process.env.MAILTRAP_AUTH_USER;
     this.mailTrapAuthPass = process.env.MAILTRAP_AUTH_PASS;
-    ;
   }
 }
 let valArr = [];
@@ -32,6 +31,7 @@ class config {
   constructor() {
     throw new Error("Use config.getInstance()");
   }
+  static instance;
   static getInstance() {
     if (!config.instance) {
       config.instance = new PrivateConfig();
@@ -50,4 +50,4 @@ class config {
     });
   }
 }
-module.exports= config;
+module.exports = config;

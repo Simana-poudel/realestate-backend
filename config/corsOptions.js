@@ -7,6 +7,7 @@ if(!whitelist){
     whitelist = ['http://localhost:3000', 'http://localhost:5000']
 }
 
+
 exports.corsOptions = {
     origin: function (origin, callback) {
       // console.log({origin,whitelist})
