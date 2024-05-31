@@ -1,7 +1,6 @@
-const{ uploadImage } = require('../middlewares/multerUpload');
+const { uploadImage } = require("../middlewares/multerUpload");
 const Property = require("../model/property.model");
-const PropertyDocument = require('../model/propertyDocument.model');
-
+const PropertyDocument = require("../model/propertyDocument.model");
 
 const jwt = require("express-jwt");
 
@@ -68,17 +67,16 @@ exports.getProperties = async (req, res) => {
   }
 };
 
-
-  exports.getProperty = async (req, res) => {
-    try {
-      const id = req.params?.propertyId;
-      const property = await Property.findOne({ _id: id }).populate('user');// added
-      res.json({ data: property }).status(200);
-    } catch (e) {
-      console.log(e);
-      res.json({ error: `Error Occured, ${e}` }).status(500);
-    }
-  };
+exports.getProperty = async (req, res) => {
+  try {
+    const id = req.params?.propertyId;
+    const property = await Property.findOne({ _id: id }).populate("user"); // added
+    res.json({ data: property }).status(200);
+  } catch (e) {
+    console.log(e);
+    res.json({ error: `Error Occured, ${e}` }).status(500);
+  }
+};
 
 exports.postProperty = async (req, res) => {
   try {
@@ -87,20 +85,17 @@ exports.postProperty = async (req, res) => {
       if (err) {
         // An error occurred while uploading
         console.log(err);
-        return res.status(500).json({ error: 'Error occurred while uploading images' });
+        return res
+          .status(500)
+          .json({ error: "Error occurred while uploading images" });
       }
 
       // Access the uploaded files using req.files
       const images = req.files.map((file) => {
-        const fileName = file.originalname; // Concatenate date and original name to create the filename
-        const filePath = 'http://127.0.0.1:8080/' + fileName; // Concatinate path and filename to create the full file path
-
+        console.log(file);
         return {
-          name: filePath,
-          image: {
-            data: file.buffer,
-            contentType: file.mimetype
-          }
+          name: file.originalname,
+          imageUrl: file.path, // Cloudinary URL for the uploaded image
         };
       });
 
@@ -125,11 +120,10 @@ exports.postProperty = async (req, res) => {
         builtYear,
         usedArea,
         latitude,
-        longitude
+        longitude,
       } = req.body;
 
       const coordinatesJson = [latitude, longitude];
-
 
       // Create a new property information with the uploaded images
       const newProperty = new Property({
@@ -153,7 +147,7 @@ exports.postProperty = async (req, res) => {
         builtYear: builtYear || 0,
         usedArea: usedArea || 0,
         coordinates: coordinatesJson,
-        propertyImage: images // Assign the uploaded images to the propertyImage field
+        propertyImage: images, // Assign the uploaded images to the propertyImage field
       });
 
       // Save the new property info
@@ -167,52 +161,47 @@ exports.postProperty = async (req, res) => {
   }
 };
 
-  exports.updateProperty = async (req, res) => {
-    try {
-      const { propertyId } = req.params;
-      const updatedPropertyData = req.body;
-  
-      // Find the existing property document by propertyId and update its data
-      const updatedProperty = await Property.findByIdAndUpdate(
-        propertyId,
-        updatedPropertyData,
-        { new: true }
-      );
-  
-      if (!updatedProperty) {
-        return res.status(404).json({ error: "Property not found" });
-      }
-  
-      res.status(200).json({ data: updatedProperty });
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({ error: `Error Occurred: ${error}` });
+exports.updateProperty = async (req, res) => {
+  try {
+    const { propertyId } = req.params;
+    const updatedPropertyData = req.body;
+
+    // Find the existing property document by propertyId and update its data
+    const updatedProperty = await Property.findByIdAndUpdate(
+      propertyId,
+      updatedPropertyData,
+      { new: true }
+    );
+
+    if (!updatedProperty) {
+      return res.status(404).json({ error: "Property not found" });
     }
-  };
 
-  exports.deleteProperty = async (req, res) => {
-    try {
-      const { propertyId } = req.params;
-      const {propertyDocumentId} = req.params;
-  
-      // Find the property document by propertyId and delete it
-      const deletedProperty = await Property.findByIdAndDelete(propertyId);
-      const deletedPropertyDocument = await PropertyDocument.findByIdAndDelete(propertyDocumentId);
+    res.status(200).json({ data: updatedProperty });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: `Error Occurred: ${error}` });
+  }
+};
 
-      if (!deletedProperty) {
-        return res.status(404).json({ error: "Property not found" });
-      }
-  
-      res.status(200).json({ message: "Property deleted successfully" });
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({ error: `Error Occurred: ${error}` });
+exports.deleteProperty = async (req, res) => {
+  try {
+    const { propertyId } = req.params;
+    const { propertyDocumentId } = req.params;
+
+    // Find the property document by propertyId and delete it
+    const deletedProperty = await Property.findByIdAndDelete(propertyId);
+    const deletedPropertyDocument = await PropertyDocument.findByIdAndDelete(
+      propertyDocumentId
+    );
+
+    if (!deletedProperty) {
+      return res.status(404).json({ error: "Property not found" });
     }
-  };
 
-
-
-
-  
-  
-
+    res.status(200).json({ message: "Property deleted successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: `Error Occurred: ${error}` });
+  }
+};
