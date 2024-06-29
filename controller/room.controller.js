@@ -1,6 +1,4 @@
-const Room = require('../model/room.model');
-
-
+const Room = require("../model/room.model");
 
 exports.getRooms = async (req, res) => {
   try {
@@ -12,5 +10,3 @@ exports.getRooms = async (req, res) => {
     res.json({ error: `Error Occured, ${e}` }).status(500);
   }
 };
-
-

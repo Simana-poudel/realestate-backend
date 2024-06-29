@@ -84,23 +84,53 @@ exports.postProperty = async (req, res) => {
     uploadImage(req, res, async function (err) {
       if (err) {
         // An error occurred while uploading
-        console.log(err);
+        console.error("Error occurred while uploading images:", err);
         return res
           .status(500)
           .json({ error: "Error occurred while uploading images" });
       }
 
       // Access the uploaded files using req.files
-      const images = req.files.map((file) => {
-        console.log(file);
-        return {
-          name: file.originalname,
-          imageUrl: file.path, // Cloudinary URL for the uploaded image
-        };
-      });
+      const images = req.files.map((file) => ({
+        name: file.originalname,
+        imageUrl: file.path, // Cloudinary URL for the uploaded image
+      }));
 
       const {
         userId,
+        propertyType = "house",
+        title = "",
+        description = "",
+        price = 0,
+        district = "",
+        city = "",
+        size = 0,
+        area = 0,
+        rooms = 0,
+        parkingSpace = 0,
+        kitchen = 0,
+        bedroom = 0,
+        diningRoom = 0,
+        hall = 0,
+        bathroom = 0,
+        noOfFloors = 0,
+        builtYear = 0,
+        usedArea = 0,
+        latitude,
+        longitude,
+      } = req.body;
+
+      if (!latitude || !longitude) {
+        return res
+          .status(400)
+          .json({ error: "Latitude and Longitude are required" });
+      }
+
+      const coordinatesJson = [latitude, longitude];
+
+      // Create a new property information with the uploaded images
+      const newProperty = new Property({
+        user: userId,
         propertyType,
         title,
         description,
@@ -119,33 +149,6 @@ exports.postProperty = async (req, res) => {
         noOfFloors,
         builtYear,
         usedArea,
-        latitude,
-        longitude,
-      } = req.body;
-
-      const coordinatesJson = [latitude, longitude];
-
-      // Create a new property information with the uploaded images
-      const newProperty = new Property({
-        user: userId,
-        propertyType,
-        title,
-        description,
-        price,
-        district,
-        city,
-        size,
-        area,
-        rooms: rooms || 0,
-        parkingSpace: parkingSpace || 0,
-        kitchen: kitchen || 0,
-        bedroom: bedroom || 0,
-        diningRoom: diningRoom || 0,
-        hall: hall || 0,
-        bathroom: bathroom || 0,
-        noOfFloors: noOfFloors || 0,
-        builtYear: builtYear || 0,
-        usedArea: usedArea || 0,
         coordinates: coordinatesJson,
         propertyImage: images, // Assign the uploaded images to the propertyImage field
       });
@@ -153,11 +156,14 @@ exports.postProperty = async (req, res) => {
       // Save the new property info
       const savedProperty = await newProperty.save();
 
-      res.status(201).json({ data: savedProperty });
+      res.status(201).json({
+        message: "Property created successfully",
+        data: savedProperty,
+      });
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: `Error Occurred: ${error}` });
+    console.error("Error occurred:", error);
+    res.status(500).json({ error: `Error occurred: ${error.message}` });
   }
 };
 

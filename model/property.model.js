@@ -23,7 +23,6 @@ const propertySchema = new mongoose.Schema(
     },
     propertyType: {
       type: String,
-      enum: ["land", "house"],
       required: true,
     },
     title: {
